@@ -1,0 +1,33 @@
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                ${data[0].reduce((acc, colName) => {
+                    if (typeof colName === "object") {
+                        return acc + `<th class="sticky" style="background-color: ${colName.color};">${colName.value}</th>`
+                    } else {
+                        return acc + `<th class="sticky">${colName}</th>`
+                    }
+                }, '')}
+            </tr>
+        </thead>
+        <tbody>
+            ${data.slice(1).reduce((trAcc, row, index) => {
+                return trAcc + `<tr>${
+                    row.reduce((tdAcc, value, cIndex) => {
+                        if (cIndex === 0) {
+                            if (typeof value === "object") {
+                                return tdAcc + `<td class="sticky" style="background-color: ${value.color};"><div class="flex"><div class="row-index">${index + 1}</div><div class="row-label">${value.value}</div></div></td>`;
+                            }
+                            return tdAcc + `<td class="sticky"><div class="flex"><div class="row-index">${index + 1}</div><div class="row-label">${value}</div></div></td>`;
+                        } else if (typeof value === "object") {
+                            return tdAcc + `<td style="background-color: ${value.color};">${value.value}</td>`;
+                        } else {
+                            return tdAcc + `<td>${value}</td>`;
+                        }
+                    }, '')
+                }</tr>`;
+            }, '')}
+        </tbody>
+    </table>
+</div>

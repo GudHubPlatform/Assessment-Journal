@@ -1,0 +1,95 @@
+:root {
+    --gh-2d-table-border: solid 1px #ddd;
+}
+
+gh-2d-table {
+    width: 100%;
+
+    .table-container {
+        max-width: 100%;
+        max-height: 600px;
+        overflow: auto;
+        background: white;
+        margin: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+  
+    thead {
+        position: sticky;
+        z-index: 2;
+        top: 0;
+    }
+
+    th,
+    td {
+        padding: 10px;
+        white-space: nowrap;
+        border-right: 1px solid #ccc;
+        border-bottom: 1px solid #ccc;
+    }
+
+    td.sticky,
+    th.sticky {
+        z-index: 1;
+        position: sticky;
+        left: 0;
+        background: white;
+        border-right: 2px solid #ccc;
+    }
+
+    th.sticky {
+        background: #ddd;
+    }
+
+    th {
+        text-align: left;
+        background: #ddd;
+        border-bottom: 2px solid #ccc;
+    }
+
+    td {
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+        color: #333;
+
+        &.sticky {
+            padding: 0;
+            
+            .cell {
+                padding: 8px 10px;
+            }
+        }
+    }
+
+    table tr:last-child td {
+        border-bottom: none;
+    }
+    .flex {
+        display: flex;
+
+        div {
+            padding: 8px 10px;
+            &:not(:last-child) {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                min-width: 40px;
+                max-width: 40px;
+                border-right: 1px solid #ccc;
+            }
+        }
+    }
+
+    @media screen and (max-width: 720px) {
+        .row-label {
+            text-wrap: auto;
+        }
+    }
+}
