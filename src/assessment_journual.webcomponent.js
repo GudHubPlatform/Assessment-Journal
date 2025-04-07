@@ -1,9 +1,9 @@
 import GhHtmlElement from '@gudhub/gh-html-element';
-import html from './2d-table.html';
+import html from './assessment_journual.html';
 import './style.scss';
 import create2dDataArray from './dataPrepatation.js';
 
-class Gh2dTable extends GhHtmlElement {
+class GhAssessmentJournual extends GhHtmlElement {
 	constructor() {
 		super();
 	}
@@ -34,6 +34,6 @@ class Gh2dTable extends GhHtmlElement {
 }
 
 // Register web component only if it is not registered yet
-if (!window.customElements.get('gh-2d-table')) {
-	window.customElements.define('gh-2d-table', Gh2dTable);
+if (!window.customElements.get('gh-assessment-journual')) {
+	window.customElements.define('gh-assessment-journual', GhAssessmentJournual);
 }

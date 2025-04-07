@@ -1,4 +1,4 @@
-import './2dTable.webcomponent.js';
+import './assessment_journual.webcomponent.js';
 
 export const valueTypes = {
 	number: "Number",
@@ -17,20 +17,20 @@ export const reportSettingProperties = {
 	}
 };
 
-export default class Gh2dTable {
+export default class GhAssessmentJournual {
 	/*------------------------------- FIELD TEMPLATE --------------------------------------*/
 
 	getTemplate() {
 		return {
 			constructor: 'field',
-			name: '2D Table',
+			name: 'Assessment Journual',
 			icon: 'text_icon',
-            type: '2d_table',
+            type: 'assessment_journual',
 			model: {
 				field_id: 0,
-				field_name: '2D Table',
+				field_name: 'Assessment Journual',
 				field_value: '',
-				data_type: '2d_table',
+				data_type: 'assessment_journual',
 				data_model: {
 					records_app_id: null,
 					row_item_reference_field_id: null,
@@ -77,7 +77,7 @@ export default class Gh2dTable {
 				id: 'default',
 				name: 'Default',
 				content: () =>
-					'<gh-2d-table app-id="{{appId}}" item-id="{{itemId}}" field-id="{{fieldId}}"></gh-2d-table>'
+					'<gh-assessment-journual app-id="{{appId}}" item-id="{{itemId}}" field-id="{{fieldId}}"></gh-assessment-journual>'
 			},
 			{
 				id: 'value',
