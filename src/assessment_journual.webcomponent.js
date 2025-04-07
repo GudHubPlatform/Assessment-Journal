@@ -2,6 +2,7 @@ import GhHtmlElement from '@gudhub/gh-html-element';
 import html from './assessment_journual.html';
 import './style.scss';
 import create2dDataArray from './dataPrepatation.js';
+import { downloadAsCSV } from './downloadAsCSV.js';
 
 class GhAssessmentJournual extends GhHtmlElement {
 	constructor() {
@@ -25,11 +26,12 @@ class GhAssessmentJournual extends GhHtmlElement {
 
 		super.render(html);
 
-		this.applyStyles();
+		this.attachListeners();
 	}
 
-	applyStyles() {
-		console.log(this);
+	attachListeners() {
+		const exportButton = this.querySelector('.export-button');
+		exportButton.addEventListener('click', () => downloadAsCSV(this.data));
 	}
 }
 
