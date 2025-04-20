@@ -4,9 +4,9 @@
             <tr>
                 ${data[0].reduce((acc, colName) => {
                     if (typeof colName === "object") {
-                        return acc + `<th class="sticky" style="background-color: ${colName.color};">${colName.value}</th>`
+                        return acc + `<th class="sticky" style="background-color: ${colName.color};"><div class="rotated">${colName.value}</div></th>`
                     } else {
-                        return acc + `<th class="sticky">${colName}</th>`
+                        return acc + `<th class="sticky"><div class="rotated">${colName}</div></th>`
                     }
                 }, '')}
             </tr>

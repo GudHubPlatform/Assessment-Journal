@@ -3,7 +3,6 @@ gh-assessment-journual {
 
     .table-container {
         max-width: 100%;
-        max-height: 600px;
         overflow: auto;
         background: white;
         margin: 20px;
@@ -42,6 +41,12 @@ gh-assessment-journual {
 
     th.sticky {
         background: #ddd;
+        vertical-align: bottom; /* важливо! */
+    }
+
+    th .rotated {
+        writing-mode: vertical-rl;
+        transform: rotate(180deg); /* змінює напрямок */
     }
 
     th {
