@@ -4,6 +4,7 @@ import { reportSettingProperties, valueTypes } from "./data.js";
 export const cellTypes = {
     HEADER: 'header',
     REPORT: 'report',
+    REPORT_HEADER: 'report_header',
     VALUE: 'value',
     EMPTY: 'empty'
 };
@@ -49,9 +50,9 @@ export default async function create2dDataArray(settings) {
     )];
 
     // Process all rows
-    rowItems.forEach((rowItem, rowIndex) => {
+    rowItems.forEach((rowItem) => {
         // Create new row, first element - row header
-        const row = [createCell(cellTypes.HEADER, rowMap[rowItem.item_id], { index: rowIndex + 1 })];
+        const row = [createCell(cellTypes.HEADER, rowMap[rowItem.item_id])];
         
         // Process all columns
         columnItems.forEach(columnItem => {
@@ -151,7 +152,7 @@ function addReports(dataArray, reportOptions, valueType) {
         }
 
         if (type === reportSettingProperties.type.row) {
-            newDataArray[0].push(createCell(cellTypes.REPORT, name, { color }));
+            newDataArray[0].push(createCell(cellTypes.REPORT_HEADER, name, { color }));
             
             for (let i = 1; i < dataArray.length; i++) {
                 let values = dataArray[i].slice(1).map(cell => cell.value);
@@ -161,7 +162,7 @@ function addReports(dataArray, reportOptions, valueType) {
                 newDataArray[i].push(createCell(cellTypes.REPORT, result, { color: color + "80" }));
             }
         } else if (type === reportSettingProperties.type.column) {
-            let newRow = [createCell(cellTypes.REPORT, name, { color })];
+            let newRow = [createCell(cellTypes.REPORT_HEADER, name, { color })];
             
             for (let col = 1; col < dataArray[0].length; col++) {
                 let columnValues = dataArray.slice(1).map(row => row[col].value);

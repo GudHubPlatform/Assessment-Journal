@@ -36,7 +36,7 @@ class GhAssessmentJournual extends GhHtmlElement {
 		const settings = this.scope.field_model.data_model;
 		
 		this.data = await create2dDataArray(settings);
-		console.log(this.data);
+
 		super.render(html);
 
 		this.attachListeners();
@@ -46,6 +46,34 @@ class GhAssessmentJournual extends GhHtmlElement {
 		const itemId = cell.dataset.itemId;
 		if (itemId) {
 			console.log('Item ID:', itemId);
+			
+			// Cache the cell content
+			const cellContent = cell.querySelector('.cell');
+			const originalContent = cellContent.innerHTML;
+			
+			// Create input element
+			const input = document.createElement('input');
+			input.type = 'text';
+			input.value = cellContent.textContent;
+			input.style.display = 'block';
+
+			// Replace content with input
+			cellContent.innerHTML = '';
+			cellContent.appendChild(input);
+			input.focus();
+
+			// Handle blur event
+			input.addEventListener('blur', () => {
+				const newValue = input.value;
+				cellContent.innerHTML = newValue;
+			});
+
+			// Handle Enter key
+			input.addEventListener('keypress', (e) => {
+				if (e.key === 'Enter') {
+					input.blur();
+				}
+			});
 		}
 	}
 
