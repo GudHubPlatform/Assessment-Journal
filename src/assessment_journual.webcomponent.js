@@ -1,8 +1,9 @@
 import GhHtmlElement from '@gudhub/gh-html-element';
 import html from './assessment_journual.html';
 import './style.scss';
-import create2dDataArray, { cellTypes } from './dataPrepatation.js';
+import create2dDataArray, { cellTypes, getEmojiByValue, getValueByEmoji } from './dataPrepatation.js';
 import { downloadAsCSV } from './downloadAsCSV.js';
+import { valueTypes } from './data.js';
 
 class GhAssessmentJournual extends GhHtmlElement {
 	constructor() {
@@ -18,8 +19,63 @@ class GhAssessmentJournual extends GhHtmlElement {
 		};
 	}
 
+	// create input element based on value type
+	createCellInput(cellContent, onBlur) {
+		const settings = this.scope.field_model.data_model;
+		const type = settings.value_type;
+
+		let input;
+
+		if (type === valueTypes.bool) {
+			input = document.createElement('input');
+			input.type = 'checkbox';
+			input.checked = getValueByEmoji(cellContent);
+		} else if (type === valueTypes.number) {
+			input = document.createElement('input');
+			input.type = 'number';
+			input.value = cellContent;
+
+			document.addEventListener('click', (e) => {
+				if (e.target === input) {
+					console.log(1);
+				} else {
+					console.log(2);
+				}
+			});
+		} else {
+			input = document.createElement('input');
+			input.type = 'text';
+			input.value = cellContent;
+		}
+
+		// Handle blur event
+		input.addEventListener('blur', () => {
+			let newContent;
+
+			if (type === valueTypes.bool) {
+				newContent = getEmojiByValue(input.checked ? '1' : '0');
+			} else {
+				newContent = input.value;
+			}
+
+			onBlur(newContent);
+		});
+
+		// Handle Enter key
+		input.addEventListener('keypress', (e) => {
+			if (e.key === 'Enter') {
+				input.blur();
+			}
+		});
+
+		input.style.display = 'block';
+
+		return input;
+	}
+
 	// onInit() is called after parent gh-element scope is ready
 	onInit() {
+		this.cellInEditMode = null;
 		this.journalAppId = this.scope.field_model.data_model.records_app_id;
 
 		this.cellTypes = cellTypes;
@@ -61,38 +117,32 @@ class GhAssessmentJournual extends GhHtmlElement {
 	}
 
 	onCellClick(cell) {
-		const itemId = cell.dataset.itemId;
-		if (itemId) {
-			console.log('Item ID:', itemId);
-			
-			// Cache the cell content
-			const cellContent = cell.querySelector('.cell');
-			const originalContent = cellContent.innerHTML;
-			
-			// Create input element
-			const input = document.createElement('input');
-			input.type = 'text';
-			input.value = cellContent.textContent;
-			input.style.display = 'block';
-
-			// Replace content with input
-			cellContent.innerHTML = '';
-			cellContent.appendChild(input);
-			input.focus();
-
-			// Handle blur event
-			input.addEventListener('blur', () => {
-				const newValue = input.value;
-				cellContent.innerHTML = newValue;
-			});
-
-			// Handle Enter key
-			input.addEventListener('keypress', (e) => {
-				if (e.key === 'Enter') {
-					input.blur();
-				}
-			});
+		if (this.cellInEditMode === cell || cell.getAttribute('data-item-id') === '') {
+			return;
 		}
+
+		const innerCell = cell.querySelector('.cell');
+		const content = innerCell.innerHTML;
+
+		const onBlur = (newContent) => {
+			if (content !== newContent) {
+				console.log('content', content);
+				console.log('newContent', newContent);
+			}
+
+			innerCell.innerHTML = newContent;
+			cell.replaceChildren(innerCell);
+
+			this.cellInEditMode = null;
+		};
+
+		const input = this.createCellInput(content, onBlur);
+
+		cell.innerHTML = '';
+		cell.appendChild(input);
+		input.focus();
+
+		this.cellInEditMode = cell;
 	}
 
 	attachListeners() {

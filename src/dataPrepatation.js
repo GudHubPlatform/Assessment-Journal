@@ -1,5 +1,22 @@
 import { reportSettingProperties, valueTypes } from "./data.js";
 
+// Emoji symbols for boolean values
+const EMOJI_TRUE = '✅';
+const EMOJI_FALSE = '◯';
+
+export function getEmojiByValue(value) {
+    if (value === "1" || value === 1) {
+        return EMOJI_TRUE;
+    } else if (value === "0" || value === 0) {
+        return EMOJI_FALSE;
+    }
+}
+
+export function getValueByEmoji(emoji) {
+    if (emoji === EMOJI_TRUE) return "1";
+    if (emoji === EMOJI_FALSE) return "0";
+}
+
 // Cell types
 export const cellTypes = {
     HEADER: 'header',
@@ -114,14 +131,13 @@ function findRecord(records, row_app_id, row_item_reference_field_id, row_item_i
 // Format value according to type
 function formatValue(value, type) {
     if (type === valueTypes.bool) {
-        if (value === "1" || value === 1 || value === true) {
-            return "✅";
-        } else if (value === "0" || value === 0 || value === false) {
-            return "◯";
+        if (value === '') {
+            return value;
         } else {
-            return "";
+            return getEmojiByValue(value);
         }
     }
+
     return value;
 }
 
