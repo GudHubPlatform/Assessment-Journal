@@ -2,28 +2,37 @@
     <table>
         <thead>
             <tr>
-                ${data[0].reduce((acc, col, cIndex) => {
-                    if (typeof col === "object") {
-                        return acc + `<th class="sticky" style="background-color: ${col.color};"><div class="rotated">${col.value}</div></th>`
-                    } else {
-                        return acc + `<th class="sticky"><div class="rotated">${col}</div></th>`
+                ${data[0].reduce((acc, cell) => {
+                    switch(cell.type) {
+                        case cellTypes.HEADER:
+                            return acc + `<th class="sticky"><div class="rotated">${cell.value}</div></th>`;
+                        case cellTypes.EMPTY:
+                            return acc + `<th class="sticky"></th>`;
+                        default:
+                            return acc + `<th class="sticky"><div class="rotated">${cell.value}</div></th>`;
                     }
                 }, '')}
             </tr>
         </thead>
         <tbody>
-            ${data.slice(1).reduce((trAcc, row, index) => {
+            ${data.slice(1).reduce((trAcc, row, rowIndex) => {
                 return trAcc + `<tr>${
-                    row.reduce((tdAcc, value, cIndex) => {
-                        if (cIndex === 0) {
-                            if (typeof value === "object") {
-                                return tdAcc + `<td class="sticky" style="background-color: ${value.color};"><div class="flex"><div class="row-index">${index + 1}</div><div class="row-label">${value.value}</div></div></td>`;
-                            }
-                            return tdAcc + `<td class="sticky"><div class="flex"><div class="row-index">${index + 1}</div><div class="row-label">${value}</div></div></td>`;
-                        } else if (typeof value === "object") {
-                            return tdAcc + `<td style="background-color: ${value.color};">${value.value}</td>`;
-                        } else {
-                            return tdAcc + `<td>${value}</td>`;
+                    row.reduce((tdAcc, cell, colIndex) => {
+                        switch(cell.type) {
+                            case cellTypes.HEADER:
+                                return tdAcc + `<td class="sticky"><div class="flex"><div class="row-index">${cell.index}</div><div class="row-label">${cell.value}</div></div></td>`;
+                            
+                            case cellTypes.REPORT:
+                                return tdAcc + `<td style="background-color: ${cell.color};">${cell.value}</td>`;
+                            
+                            case cellTypes.VALUE:
+                                return tdAcc + `<td class="editable-cell" data-item-id="${cell.item_id || ''}">${cell.value}</td>`;
+                            
+                            case cellTypes.EMPTY:
+                                return tdAcc + `<td></td>`;
+                            
+                            default:
+                                return tdAcc + `<td>${cell.value}</td>`;
                         }
                     }, '')
                 }</tr>`;

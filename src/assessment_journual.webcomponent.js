@@ -1,7 +1,7 @@
 import GhHtmlElement from '@gudhub/gh-html-element';
 import html from './assessment_journual.html';
 import './style.scss';
-import create2dDataArray from './dataPrepatation.js';
+import create2dDataArray, { cellTypes } from './dataPrepatation.js';
 import { downloadAsCSV } from './downloadAsCSV.js';
 
 class GhAssessmentJournual extends GhHtmlElement {
@@ -11,6 +11,7 @@ class GhAssessmentJournual extends GhHtmlElement {
 
 	// onInit() is called after parent gh-element scope is ready
 	onInit() {
+		this.cellTypes = cellTypes;
 		this.renderComponent();
 		this.subscribeToUpdates();
 	}
@@ -26,9 +27,7 @@ class GhAssessmentJournual extends GhHtmlElement {
 			gudhub.on(
 				'gh_items_update',
 				{ journal_app_id: journalAppId },
-				() => {
-					this.renderComponent();
-				}
+				() => this.renderComponent()
 			);
 		}
 	}
@@ -37,15 +36,28 @@ class GhAssessmentJournual extends GhHtmlElement {
 		const settings = this.scope.field_model.data_model;
 		
 		this.data = await create2dDataArray(settings);
-
+		console.log(this.data);
 		super.render(html);
 
 		this.attachListeners();
 	}
 
+	onCellClick(cell) {
+		const itemId = cell.dataset.itemId;
+		if (itemId) {
+			console.log('Item ID:', itemId);
+		}
+	}
+
 	attachListeners() {
 		const exportButton = this.querySelector('.export-button');
 		exportButton.addEventListener('click', () => downloadAsCSV(this.data));
+
+		// Add handlers for editable cells
+		const editableCells = this.querySelectorAll('.editable-cell');
+		editableCells.forEach(cell => {
+			cell.addEventListener('click', (e) => this.onCellClick(cell));
+		});
 	}
 }
 
