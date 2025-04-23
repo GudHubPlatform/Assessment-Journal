@@ -9,27 +9,45 @@ class GhAssessmentJournual extends GhHtmlElement {
 		super();
 	}
 
+	// debounce utility
+	debounce(fn, ms) {
+		let timer = null;
+		return (...args) => {
+			if (timer) clearTimeout(timer);
+			timer = setTimeout(() => fn.apply(this, args), ms);
+		};
+	}
+
 	// onInit() is called after parent gh-element scope is ready
 	onInit() {
+		this.journalAppId = this.scope.field_model.data_model.records_app_id;
+
 		this.cellTypes = cellTypes;
 		this.renderComponent();
 		this.subscribeToUpdates();
 	}
 
-	// disconnectedCallback() is called after the component is destroyed 
+	// disconnectedCallback() is called after the component is destroyed
 	disconnectedCallback() {
-		// Add any cleanup logic if necessary
+		// Destroy subscription to avoid memory leaks
+			gudhub.destroy(
+				'gh_items_update',
+				{ app_id: this.journalAppId },
+				this.updateCallback
+			);
 	}
 
 	subscribeToUpdates() {
-		const journalAppId = this.scope.field_model.data_model.records_app_id;
-		if (journalAppId) {
-			gudhub.on(
-				'gh_items_update',
-				{ journal_app_id: journalAppId },
-				() => this.renderComponent()
-			);
-		}
+		// Debounce updates to avoid rapid re-renders
+		this.updateCallback = this.debounce(
+			() => this.renderComponent(),
+			500
+		);
+		gudhub.on(
+			'gh_items_update',
+			{ app_id: this.journalAppId },
+			this.updateCallback
+		);
 	}
 
 	async renderComponent() {
