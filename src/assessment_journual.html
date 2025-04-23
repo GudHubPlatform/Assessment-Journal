@@ -2,11 +2,11 @@
     <table>
         <thead>
             <tr>
-                ${data[0].reduce((acc, colName) => {
-                    if (typeof colName === "object") {
-                        return acc + `<th class="sticky" style="background-color: ${colName.color};"><div class="rotated">${colName.value}</div></th>`
+                ${data[0].reduce((acc, col, cIndex) => {
+                    if (typeof col === "object") {
+                        return acc + `<th class="sticky" style="background-color: ${col.color};"><div class="rotated">${col.value}</div></th>`
                     } else {
-                        return acc + `<th class="sticky"><div class="rotated">${colName}</div></th>`
+                        return acc + `<th class="sticky"><div class="rotated">${col}</div></th>`
                     }
                 }, '')}
             </tr>

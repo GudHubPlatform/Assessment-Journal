@@ -1,31 +1,42 @@
 import { reportSettingProperties, valueTypes } from "./data.js";
 
 export default async function create2dDataArray(settings) {
+    // Отримуємо всі необхідні налаштування з конфігурації
     const {
-        records_app_id,
-        row_item_reference_field_id,
-        column_item_reference_field_id,
-        record_value_field_id,
-        row_app_id,
-        row_title_field_id,
-        column_app_id,
-        column_title_field_id,
-        reportOptions,
-        value_type
+        records_app_id,          // ID апки з записами оцінок
+        row_item_reference_field_id,    // ID поля посилання на рядок
+        column_item_reference_field_id, // ID поля посилання на колонку
+        record_value_field_id,   // ID поля зі значенням оцінки
+        row_app_id,              // ID апки з рядками
+        row_title_field_id,      // ID поля з назвою рядка
+        column_app_id,           // ID апки з колонками
+        column_title_field_id,   // ID поля з назвою колонки
+        reportOptions,           // Налаштування звітів
+        value_type              // Тип значення (число, текст, булеве)
     } = settings;
 
-    const rowItems = await gudhub.getItems(row_app_id, false);
-    const columnItems = await gudhub.getItems(column_app_id, false);
-    const records = await gudhub.getItems(records_app_id, false);
+    // Отримуємо всі дані з GudHub
+    const rowItems = await gudhub.getItems(row_app_id, false);        // Отримуємо всі рядки
+    const columnItems = await gudhub.getItems(column_app_id, false);  // Отримуємо всі колонки
+    const records = await gudhub.getItems(records_app_id, false);     // Отримуємо всі записи оцінок
     
-    const rowMap = createMap(rowItems, row_title_field_id);
-    const columnMap = createMap(columnItems, column_title_field_id);
+    // Створюємо мапи для швидкого пошуку назв по ID
+    const rowMap = createMap(rowItems, row_title_field_id);           // Мапа: ID рядка -> назва рядка
+    const columnMap = createMap(columnItems, column_title_field_id);  // Мапа: ID колонки -> назва колонки
 
-    const dataArray = [[""].concat(Object.values(columnMap))];
+    // Створюємо перший рядок таблиці (заголовки)
+    // Перший елемент - порожній (для кутової клітинки)
+    // Далі йдуть назви колонок в тому ж порядку, що й columnItems
+    const dataArray = [[""].concat(columnItems.map(item => columnMap[item.item_id]))];
 
+    // Проходимо по всіх рядках
     rowItems.forEach(rowItem => {
+        // Створюємо новий ряд, перший елемент - назва рядка
         const row = [rowMap[rowItem.item_id]];
+        
+        // Проходимо по всіх колонках в тому ж порядку, що й в заголовках
         columnItems.forEach(columnItem => {
+            // Шукаємо запис оцінки для поточної комірки
             const record = findRecord(
                 records,
                 row_app_id,
@@ -35,21 +46,30 @@ export default async function create2dDataArray(settings) {
                 column_item_reference_field_id,
                 columnItem.item_id
             );
+
+            // Отримуємо значення оцінки з запису
             const rawValue = record
                 ? record.fields.find(f => f.field_id == record_value_field_id)?.field_value || ""
                 : "";
 
+            // Форматуємо значення відповідно до типу
             const formattedValue = formatValue(rawValue, value_type);
+            
+            // Додаємо значення до рядка
             row.push(formattedValue);
         });
+        
+        // Додаємо готовий ряд до масиву даних
         dataArray.push(row);
     });
 
+    // Додаємо звіти (підсумки) до таблиці
     const dataArrayWithReports = addReports(dataArray, reportOptions, value_type);
 
     return dataArrayWithReports;
 }
 
+// Створює мапу: ID -> назва
 function createMap(items, title_field_id) {
     return Object.fromEntries(
         items.map(item => [
@@ -59,17 +79,25 @@ function createMap(items, title_field_id) {
     );
 }
 
+// Шукає запис оцінки для конкретної комірки
 function findRecord(records, row_app_id, row_item_reference_field_id, row_item_id, column_app_id, column_item_reference_field_id, column_item_id) {
-    return records.find(record =>
+    if (row_item_id == "4475268" && column_item_id == "4529354") debugger
+    
+    const record = records.find(record =>
+        // Перевіряємо посилання на рядок
         record.fields.some(
             f => f.field_id == row_item_reference_field_id && f.field_value == `${row_app_id}.${row_item_id}`
         ) &&
+        // Перевіряємо посилання на колонку
         record.fields.some(
             f => f.field_id == column_item_reference_field_id && f.field_value == `${column_app_id}.${column_item_id}`
         )
     );
+
+    return record;
 }
 
+// Форматує значення відповідно до типу
 function formatValue(value, type) {
     if (type === valueTypes.bool) {
         if (value === "1" || value === 1 || value === true) {

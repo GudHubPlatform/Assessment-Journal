@@ -12,11 +12,25 @@ class GhAssessmentJournual extends GhHtmlElement {
 	// onInit() is called after parent gh-element scope is ready
 	onInit() {
 		this.renderComponent();
+		this.subscribeToUpdates();
 	}
 
 	// disconnectedCallback() is called after the component is destroyed 
 	disconnectedCallback() {
 		// Add any cleanup logic if necessary
+	}
+
+	subscribeToUpdates() {
+		const journalAppId = this.scope.field_model.data_model.records_app_id;
+		if (journalAppId) {
+			gudhub.on(
+				'gh_items_update',
+				{ journal_app_id: journalAppId },
+				() => {
+					this.renderComponent();
+				}
+			);
+		}
 	}
 
 	async renderComponent() {
