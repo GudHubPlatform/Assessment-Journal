@@ -19,60 +19,6 @@ class GhAssessmentJournual extends GhHtmlElement {
 		};
 	}
 
-	// create input element based on value type
-	createCellInput(cellContent, onBlur) {
-		const settings = this.scope.field_model.data_model;
-		const type = settings.value_type;
-
-		let input;
-
-		if (type === valueTypes.bool) {
-			input = document.createElement('input');
-			input.type = 'checkbox';
-			input.checked = getValueByEmoji(cellContent);
-		} else if (type === valueTypes.number) {
-			input = document.createElement('input');
-			input.type = 'number';
-			input.value = cellContent;
-
-			document.addEventListener('click', (e) => {
-				if (e.target === input) {
-					console.log(1);
-				} else {
-					console.log(2);
-				}
-			});
-		} else {
-			input = document.createElement('input');
-			input.type = 'text';
-			input.value = cellContent;
-		}
-
-		// Handle blur event
-		input.addEventListener('blur', () => {
-			let newContent;
-
-			if (type === valueTypes.bool) {
-				newContent = getEmojiByValue(input.checked ? '1' : '0');
-			} else {
-				newContent = input.value;
-			}
-
-			onBlur(newContent);
-		});
-
-		// Handle Enter key
-		input.addEventListener('keypress', (e) => {
-			if (e.key === 'Enter') {
-				input.blur();
-			}
-		});
-
-		input.style.display = 'block';
-
-		return input;
-	}
-
 	// onInit() is called after parent gh-element scope is ready
 	onInit() {
 		this.cellInEditMode = null;
@@ -107,7 +53,7 @@ class GhAssessmentJournual extends GhHtmlElement {
 	}
 
 	async renderComponent() {
-		const settings = this.scope.field_model.data_model;
+		const settings = this.scope;
 		
 		this.data = await create2dDataArray(settings);
 
@@ -117,32 +63,6 @@ class GhAssessmentJournual extends GhHtmlElement {
 	}
 
 	onCellClick(cell) {
-		if (this.cellInEditMode === cell || cell.getAttribute('data-item-id') === '') {
-			return;
-		}
-
-		const innerCell = cell.querySelector('.cell');
-		const content = innerCell.innerHTML;
-
-		const onBlur = (newContent) => {
-			if (content !== newContent) {
-				console.log('content', content);
-				console.log('newContent', newContent);
-			}
-
-			innerCell.innerHTML = newContent;
-			cell.replaceChildren(innerCell);
-
-			this.cellInEditMode = null;
-		};
-
-		const input = this.createCellInput(content, onBlur);
-
-		cell.innerHTML = '';
-		cell.appendChild(input);
-		input.focus();
-
-		this.cellInEditMode = cell;
 	}
 
 	attachListeners() {

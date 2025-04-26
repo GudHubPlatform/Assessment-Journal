@@ -1,4 +1,5 @@
 import { reportSettingProperties, valueTypes } from "./data.js";
+import { filterItems } from "./filterItems.js";
 
 // Emoji symbols for boolean values
 const EMOJI_TRUE = '✅';
@@ -35,7 +36,8 @@ function createCell(type, value, options = {}) {
     };
 }
 
-export default async function create2dDataArray(settings) {
+export default async function create2dDataArray(scope) {
+    const settings = scope.field_model.data_model
     // Get all required settings from configuration
     const {
         records_app_id,          // ID of the app containing assessment records
@@ -44,15 +46,17 @@ export default async function create2dDataArray(settings) {
         record_value_field_id,   // ID of the field containing assessment value
         row_app_id,              // ID of the app containing rows
         row_title_field_id,      // ID of the field containing row title
+        row_filters_list,        // Filters for rows
         column_app_id,           // ID of the app containing columns
         column_title_field_id,   // ID of the field containing column title
+        column_filters_list,     // Filters for columns
         reportOptions,           // Report settings
         value_type              // Value type (number, text, boolean)
     } = settings;
 
     // Get all data from GudHub
-    const rowItems = await gudhub.getItems(row_app_id, false);        // Get all rows
-    const columnItems = await gudhub.getItems(column_app_id, false);  // Get all columns
+    const rowItems = await filterItems(await gudhub.getItems(row_app_id, false), scope, row_filters_list);        // Get all rows
+    const columnItems = await filterItems(await gudhub.getItems(column_app_id, false), scope, column_filters_list);  // Get all columns
     const records = await gudhub.getItems(records_app_id, false);     // Get all assessment records
     
     // Create maps for quick title lookup by ID

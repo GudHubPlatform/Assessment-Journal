@@ -38,8 +38,10 @@ export default class GhAssessmentJournual {
 					record_value_field_id: null,
 					row_app_id: null,
 					row_title_field_id: null,
+					row_filters_list: [],
 					column_app_id: null,
 					column_title_field_id: null,
+					column_filters_list: [],
 					reportOptions: [],
 					value_type: null,
 					interpretation: [
@@ -87,6 +89,11 @@ export default class GhAssessmentJournual {
 		];
 	}
 
+// TODO add filters
+// TODO remove point type
+
+// TODO add switch for edit ccell value
+
 	/*--------------------------  SETTINGS --------------------------------*/
 
 	getSettings(scope) {
@@ -96,7 +103,6 @@ export default class GhAssessmentJournual {
 				type: 'general_setting',
 				icon: 'menu',
 				columns_list: [
-					[],
 					[
 						{
 							title: 'Records Journal Settings',
@@ -280,8 +286,32 @@ export default class GhAssessmentJournual {
 									}
 								);
 							}
+						},
+						{
+							type: 'html',
+							onInit: function (settingScope) {
+								settingScope.$watch(
+									function () {
+										return settingScope.fieldModel
+											.data_model.row_app_id;
+									},
+									function (newValue) {
+										settingScope.field_model.data_model.app_id =
+											newValue;
+									}
+								);
+							},
+							data_model: function (fieldModel) {
+								return {
+									recipient: {
+										app_id: fieldModel.data_model
+											.row_app_id
+									}
+								};
+							},
+							control:
+								'<gh-filter gh-filter-data-model="field_model" filter-list="fieldModel.data_model.row_filters_list" gh-mode="variable"></gh-filter>'
 						}
-						
 					],
 					[
 						{
@@ -339,8 +369,32 @@ export default class GhAssessmentJournual {
 									}
 								);
 							}
+						},
+						{
+							type: 'html',
+							onInit: function (settingScope) {
+								settingScope.$watch(
+									function () {
+										return settingScope.fieldModel
+											.data_model.column_app_id;
+									},
+									function (newValue) {
+										settingScope.field_model.data_model.app_id =
+											newValue;
+									}
+								);
+							},
+							data_model: function (fieldModel) {
+								return {
+									recipient: {
+										app_id: fieldModel.data_model
+											.column_app_id
+									}
+								};
+							},
+							control:
+								'<gh-filter gh-filter-data-model="field_model" filter-list="fieldModel.data_model.column_filters_list" gh-mode="variable"></gh-filter>'
 						}
-						
 					],
 					[
 
