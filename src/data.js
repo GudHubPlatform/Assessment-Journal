@@ -33,6 +33,8 @@ export default class GhAssessmentJournual {
 				data_type: 'assessment_journual',
 				data_model: {
 					records_app_id: null,
+					isEditEnabled: false,
+					record_edit_view_id: null,
 					row_item_reference_field_id: null,
 					column_item_reference_field_id: null,
 					record_value_field_id: null,
@@ -89,10 +91,9 @@ export default class GhAssessmentJournual {
 		];
 	}
 
-// TODO add filters
-// TODO remove point type
+// TODO remove point type (need to solve the problem with defining the value type)
 
-// TODO add switch for edit ccell value
+// TODO add switch for edit cell value
 
 	/*--------------------------  SETTINGS --------------------------------*/
 
@@ -229,6 +230,45 @@ export default class GhAssessmentJournual {
 								}
 							}
 						},
+						{
+							type: 'ghElement',
+							property: 'data_model.isEditEnabled',
+							data_model() {
+								return {
+									field_name: 'Edit Enabled',
+									name_space: 'edit_enabled',
+									data_type: 'boolean',
+									data_model: {}
+								};
+							}
+						},
+						{
+							type: 'ghElement',
+							property: 'data_model.record_edit_view_id',
+							onInit: function (settingScope, fieldModel) {
+								settingScope.$watch(
+									function () {
+										return fieldModel.data_model
+											.records_app_id;
+									},
+									function (newValue) {
+										settingScope.field_model.data_model.app_id =
+											newValue;
+									}
+								);
+							},
+							data_model: function (fieldModel) {
+								return {
+									data_model: {
+										app_id: fieldModel.data_model
+											.records_app_id
+									},
+									field_name: 'View name',
+									name_space: 'view_name',
+									data_type: 'view_list'
+								};
+							}
+						}
 					],
 					[
 						{
