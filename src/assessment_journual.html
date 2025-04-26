@@ -34,7 +34,7 @@
                                 return tdAcc + `<td style="background-color: ${cell.color};"><div class="cell">${cell.value}</div></td>`;
                             
                             case cellTypes.VALUE:
-                                return tdAcc + `<td class="editable-cell" data-item-id="${cell.item_id || ''}" data-row-item-id="${cell.row_item_id}" data-column-item-id="${cell.column_item_id}"><div class="cell">${cell.value}</div></td>`;
+                                return tdAcc + `<td class="${isEditEnabled ? 'editable-cell' : ''}" data-item-id="${cell.item_id || ''}" data-row-item-id="${cell.row_item_id}" data-column-item-id="${cell.column_item_id}"><div class="cell">${cell.value}</div></td>`;
                             
                             case cellTypes.EMPTY:
                                 return tdAcc + `<td><div class="cell"></div></td>`;

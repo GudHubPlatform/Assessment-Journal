@@ -33,7 +33,7 @@ export default class GhAssessmentJournual {
 				data_type: 'assessment_journual',
 				data_model: {
 					records_app_id: null,
-					isEditEnabled: false,
+					isEditEnabled: 0,
 					record_edit_view_id: null,
 					row_item_reference_field_id: null,
 					column_item_reference_field_id: null,
@@ -92,8 +92,6 @@ export default class GhAssessmentJournual {
 	}
 
 // TODO remove point type (need to solve the problem with defining the value type)
-
-// TODO add switch for edit cell value
 
 	/*--------------------------  SETTINGS --------------------------------*/
 

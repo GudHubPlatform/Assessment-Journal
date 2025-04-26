@@ -21,7 +21,7 @@ class GhAssessmentJournual extends GhHtmlElement {
 
 	// onInit() is called after parent gh-element scope is ready
 	onInit() {
-		this.cellInEditMode = null;
+		this.isEditEnabled = Boolean(this.scope.field_model.data_model.isEditEnabled);
 		this.journalAppId = this.scope.field_model.data_model.records_app_id;
 
 		this.cellTypes = cellTypes;
@@ -71,10 +71,12 @@ class GhAssessmentJournual extends GhHtmlElement {
 		exportButton.addEventListener('click', () => downloadAsCSV(this.data));
 
 		// Add handlers for editable cells
-		const editableCells = this.querySelectorAll('.editable-cell');
-		editableCells.forEach(cell => {
-			cell.addEventListener('click', (e) => this.onCellClick(cell));
-		});
+		if (this.isEditEnabled) {
+			const editableCells = this.querySelectorAll('.editable-cell');
+			editableCells.forEach(cell => {
+				cell.addEventListener('click', (e) => this.onCellClick(cell));
+			});
+		}
 	}
 }
 
