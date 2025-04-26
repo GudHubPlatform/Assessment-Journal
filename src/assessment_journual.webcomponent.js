@@ -4,7 +4,7 @@ import './style.scss';
 import create2dDataArray, { cellTypes, getEmojiByValue, getValueByEmoji } from './dataPrepatation.js';
 import { downloadAsCSV } from './downloadAsCSV.js';
 import { valueTypes } from './data.js';
-
+import { cellClick } from './cellClick.js';
 class GhAssessmentJournual extends GhHtmlElement {
 	constructor() {
 		super();
@@ -63,6 +63,7 @@ class GhAssessmentJournual extends GhHtmlElement {
 	}
 
 	onCellClick(cell) {
+		cellClick(cell, this.scope);
 	}
 
 	attachListeners() {

@@ -92,10 +92,12 @@ export default async function create2dDataArray(scope) {
                 : "";
 
             const formattedValue = formatValue(rawValue, value_type);
-            
+
             // Add value to row with record item_id
             row.push(createCell(cellTypes.VALUE, formattedValue, { 
-                item_id: record ? record.item_id : null 
+                item_id: record ? record.item_id : null,
+                row_item_id: rowItem.item_id,
+                column_item_id: columnItem.item_id
             }));
         });
         
