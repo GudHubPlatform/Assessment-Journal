@@ -94,7 +94,6 @@ export default async function create2dDataArray(scope) {
 
 // Create a map: ID -> title
 async function createMap(app_id, items, title_field_id) {
-    debugger
     const map = {};
     for (const item of items) {
         const value = await gudhub.getInterpretationById(app_id, item.item_id, title_field_id, 'value');
