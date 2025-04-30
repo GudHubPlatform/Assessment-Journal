@@ -1,4 +1,5 @@
 gh-assessment-journual {
+    $width-cell-with-value: 34px;
     width: 100%;
 
     .table-container {
@@ -36,10 +37,12 @@ gh-assessment-journual {
     }
 
     .cell {
-        width: 50px;
-        max-width: 50px;
-        height: 100%;
-        padding: 8px 2px;
+        min-width: 34px;
+        max-width: 34px;
+        width: 34px;
+
+        min-height: 34px;
+        
         overflow: hidden;
         text-overflow: ellipsis;
         box-sizing: border-box;
@@ -69,6 +72,10 @@ gh-assessment-journual {
     th.sticky {
         background: #ddd;
         vertical-align: bottom;
+
+        .cell {
+            padding: 4px 0;
+        }
     }
 
     th .rotated {
@@ -102,21 +109,14 @@ gh-assessment-journual {
             &:hover {
                 background-color: #f5f5f5;
             }
+        }
+    }
 
-            input {
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                border: none !important;
-                padding: 8px 2px !important;
-                box-sizing: border-box;
-                font-size: inherit;
-                font-family: inherit;
-                background: white;
-                text-align: center;
-            }
+    .editable-cell, .report-value {
+        .cell {
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
     }
 
