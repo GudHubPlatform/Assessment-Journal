@@ -1,11 +1,5 @@
 import './assessment_journual.webcomponent.js';
 
-export const valueTypes = {
-	number: "Number",
-	text: "Text",
-	bool: "Boolean"
-};
-
 export const reportSettingProperties = {
 	type: {
 		row: "Row",
@@ -211,21 +205,6 @@ export default class GhAssessmentJournual {
 											newValue;
 									}
 								);
-							}
-						},
-						{
-							type: 'ghElement',
-							property: 'data_model.value_type',
-							data_model: function (fieldModel) {
-								return {
-									prop_name: 'Type',
-									data_type: 'text_opt',
-									name_space: 'value_type',
-									field_name: "Point Type",
-									data_model: {
-										options: Object.values(valueTypes).map((type) => ({ name: type, value: type }))
-									},
-								}
 							}
 						},
 						{

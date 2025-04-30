@@ -3,7 +3,6 @@ import html from './assessment_journual.html';
 import './style.scss';
 import create2dDataArray, { cellTypes, getEmojiByValue, getValueByEmoji } from './dataPrepatation.js';
 import { downloadAsCSV } from './downloadAsCSV.js';
-import { valueTypes } from './data.js';
 import { cellClick } from './cellClick.js';
 class GhAssessmentJournual extends GhHtmlElement {
 	constructor() {
