@@ -421,6 +421,7 @@ export default class GhAssessmentJournual {
 						},
 						{
 							type: 'html',
+							class: "option-column_750px",
 							data_model: function (fieldModel) {
 								return {
 									patterns: [
@@ -459,6 +460,20 @@ export default class GhAssessmentJournual {
 											prop_name: 'Color',
 											display: true,
 											data_model:function(option){}
+										},
+										{
+											property: 'filters_list',
+											prop_name: 'Filter',
+											type: 'filter_table',
+											display: true,
+											data_model: function (option, scope) {
+											  scope.appId = fieldModel.data_model.records_app_id;
+							
+											  option.filters_list ? scope.filters_list = option.filters_list : scope.filters_list = option.filters_list = [];
+											  return {
+												mode: 'variable'
+											  }
+											},
 										}
 									]
 								};

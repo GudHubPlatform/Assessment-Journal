@@ -39,7 +39,7 @@ export default async function create2dDataArray(scope) {
     // Get all data from GudHub
     const rowItems = await filterItems(await gudhub.getItems(row_app_id, false), scope, row_filters_list);        // Get all rows
     const columnItems = await filterItems(await gudhub.getItems(column_app_id, false), scope, column_filters_list);  // Get all columns
-    const records = await gudhub.getItems(records_app_id, false);     // Get all assessment records
+    const recordItems = await gudhub.getItems(records_app_id, false);     // Get all assessment records
     
     // Create maps for quick title lookup by ID
     const [rowMap, columnMap] = await Promise.all([
@@ -62,7 +62,7 @@ export default async function create2dDataArray(scope) {
         // Process all columns
         for (const columnItem of columnItems) {
             const record = findRecord(
-                records,
+                recordItems,
                 row_app_id,
                 row_item_reference_field_id,
                 rowItem.item_id,
@@ -85,7 +85,7 @@ export default async function create2dDataArray(scope) {
     };
 
     // Add reports (summaries) to the table
-    const dataArrayWithReports = addReports(dataArray, reportOptions);
+    const dataArrayWithReports = addReports(dataArray, reportOptions, recordItems, scope);
 
     return dataArrayWithReports;
 }
@@ -125,26 +125,36 @@ function countNonZero(arr) {
 }
 
 // Modifies the addReports function to use new types
-function addReports(dataArray, reportOptions) {
-    let newDataArray = dataArray.map(row => [...row]);
-    
-    reportOptions.forEach(({ type, aggregation, name, color }) => {
+async function addReports(dataArray, reportOptions, recordItems, scope) {
+    const newDataArray = dataArray.map(row => [...row]);
+
+    for (const report of reportOptions) {
+        const { type, aggregation, name, color, filters_list } = report;
+        // report can contain filters
+        let filterCallback = () => true;
+        if (filters_list && filters_list.length > 0) {
+            const filteredItems = await filterItems(recordItems, scope, filters_list);
+            filterCallback = (cell) => filteredItems.some(filteredItem => filteredItem.item_id === cell.item_id);
+        }
+
         if (type === reportSettingProperties.type.row) {
             newDataArray[0].push(createCell(cellTypes.REPORT_HEADER, name, { color }));
             
             for (let i = 1; i < dataArray.length; i++) {
-                let values = dataArray[i].slice(1).map(cell => cell.value);
-                let result = aggregation === reportSettingProperties.aggregation.sum
+                const values = dataArray[i].slice(1).filter(filterCallback).map(cell => cell.value);
+
+                const result = aggregation === reportSettingProperties.aggregation.sum
                     ? sumArray(values)
                     : countNonZero(values);
                 newDataArray[i].push(createCell(cellTypes.REPORT, result, { color: color + "80" }));
             }
         } else if (type === reportSettingProperties.type.column) {
-            let newRow = [createCell(cellTypes.REPORT_HEADER, name, { color })];
+            const newRow = [createCell(cellTypes.REPORT_HEADER, name, { color })];
             
             for (let col = 1; col < dataArray[0].length; col++) {
-                let columnValues = dataArray.slice(1).map(row => row[col].value);
-                let result = aggregation === reportSettingProperties.aggregation.sum
+                const columnValues = dataArray.slice(1).filter(filterCallback).map(row => row[col].value);
+
+                const result = aggregation === reportSettingProperties.aggregation.sum
                     ? sumArray(columnValues)
                     : countNonZero(columnValues);
                 newRow.push(createCell(cellTypes.REPORT, result, { color: color + "80" }));
@@ -152,7 +162,7 @@ function addReports(dataArray, reportOptions) {
 
             newDataArray.push(newRow);
         }
-    });
+    };
     
     return newDataArray;
 }
