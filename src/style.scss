@@ -83,8 +83,10 @@ gh-assessment-journual {
         writing-mode: vertical-rl;
         transform: rotate(180deg);
         overflow: hidden;
-        text-overflow: ellipsis;
         text-align: left;
+        font-size: 12px;
+        word-break: break-word;
+        white-space: normal;
     }
 
     th {
