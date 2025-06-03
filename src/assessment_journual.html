@@ -25,10 +25,10 @@
                     row.reduce((tdAcc, cell, colIndex) => {
                         switch(cell.type) {
                             case cellTypes.HEADER:
-                                return tdAcc + `<td class="sticky"><div class="cell row-name"><div class="row-name-content"><div class="row-index">${rowIndex}</div><div class="row-label">${cell.value}</div></div></div></td>`;
+                                return tdAcc + `<td class="sticky"><div class="cell row-name"><div class="row-name-content"><div class="row-index">${rowIndex + 1}</div><div class="row-label">${cell.value}</div></div></div></td>`;
                             
                             case cellTypes.REPORT_HEADER:
-                                return tdAcc + `<td class="sticky" style="background-color: ${cell.color};"><div class="cell row-name"><div class="row-name-content"><div class="row-index">${rowIndex}</div><div class="row-label">${cell.value}</div></div></div></td>`;
+                                return tdAcc + `<td class="sticky" style="background-color: ${cell.color};"><div class="cell row-name"><div class="row-name-content"><div class="row-index"></div><div class="row-label">${cell.value}</div></div></div></td>`;
                             
                                 case cellTypes.REPORT:
                                 return tdAcc + `<td style="background-color: ${cell.color};" class="report-value"><div class="cell">${cell.value}</div></td>`;

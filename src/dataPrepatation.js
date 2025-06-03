@@ -50,7 +50,7 @@ export default async function create2dDataArray(scope) {
     // Create first row of the table (headers)
     // First element - empty cell (for corner)
     // Then column titles
-    const dataArray = [[createCell(cellTypes.EMPTY)].concat(
+    const dataArray = [[createCell(cellTypes.EMPTY, "")].concat(
         columnItems.map(item => createCell(cellTypes.HEADER, columnMap[item.item_id]))
     )];
 
