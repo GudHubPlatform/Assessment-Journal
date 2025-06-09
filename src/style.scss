@@ -9,16 +9,18 @@ gh-assessment-journual {
         margin: 20px;
         border-radius: 10px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        max-height: calc(100vh - 102px);
     }
 
     table {
         border-collapse: separate;
         border-spacing: 0;
+        position: relative;
     }
   
     thead {
         position: sticky;
-        z-index: 2;
+        z-index: 10;
         top: 0;
     }
 
@@ -55,7 +57,7 @@ gh-assessment-journual {
 
     td.sticky,
     th.sticky {
-        z-index: 1;
+        z-index: 5;
         position: sticky;
         left: 0;
         background: white;
@@ -72,6 +74,7 @@ gh-assessment-journual {
     th.sticky {
         background: #ddd;
         vertical-align: bottom;
+        z-index: 15;
 
         .cell {
             padding: 4px 0;
@@ -125,6 +128,7 @@ gh-assessment-journual {
     table tr:last-child td {
         border-bottom: none;
     }
+    
     .row-name-content {
         display: flex;
         width: 100%;
