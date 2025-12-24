@@ -33,14 +33,15 @@ export default async function create2dDataArray(scope) {
         column_app_id,           // ID of the app containing columns
         column_title_field_id,   // ID of the field containing column title
         column_filters_list,     // Filters for columns
+        record_filters_list,     // Filters for records
         reportOptions,           // Report settings
     } = settings;
 
     // Get all data from GudHub
     const rowItems = await filterItems(await gudhub.getItems(row_app_id, false), scope, row_filters_list);        // Get all rows
     const columnItems = await filterItems(await gudhub.getItems(column_app_id, false), scope, column_filters_list);  // Get all columns
-    const recordItems = await gudhub.getItems(records_app_id, false);     // Get all assessment records
-    
+    const recordItems = await filterItems(await gudhub.getItems(records_app_id, false), scope, record_filters_list || []);     // Get all assessment records (filtered)
+
     // Create maps for quick title lookup by ID
     const [rowMap, columnMap] = await Promise.all([
         createMap(row_app_id, rowItems, row_title_field_id),           // Map: row ID -> row title
@@ -58,7 +59,7 @@ export default async function create2dDataArray(scope) {
     for (const rowItem of rowItems) {
         // Create new row, first element - row header
         const row = [createCell(cellTypes.HEADER, rowMap[rowItem.item_id])];
-        
+
         // Process all columns
         for (const columnItem of columnItems) {
             const record = findRecord(
@@ -74,13 +75,13 @@ export default async function create2dDataArray(scope) {
             const interpritatedValue = record ? await gudhub.getInterpretationById(records_app_id, record.item_id, record_value_field_id, 'value') : '';
 
             // Add value to row with record item_id
-            row.push(createCell(cellTypes.VALUE, interpritatedValue, { 
+            row.push(createCell(cellTypes.VALUE, interpritatedValue, {
                 item_id: record ? record.item_id : null,
                 row_item_id: rowItem.item_id,
                 column_item_id: columnItem.item_id
             }));
         };
-        
+
         dataArray.push(row);
     };
 
@@ -139,7 +140,7 @@ async function addReports(dataArray, reportOptions, recordItems, scope) {
 
         if (type === reportSettingProperties.type.row) {
             newDataArray[0].push(createCell(cellTypes.REPORT_HEADER, name, { color }));
-            
+
             for (let i = 1; i < dataArray.length; i++) {
                 const values = dataArray[i].slice(1).filter(filterCallback).map(cell => cell.value);
 
@@ -150,7 +151,7 @@ async function addReports(dataArray, reportOptions, recordItems, scope) {
             }
         } else if (type === reportSettingProperties.type.column) {
             const newRow = [createCell(cellTypes.REPORT_HEADER, name, { color })];
-            
+
             for (let col = 1; col < dataArray[0].length; col++) {
                 const columnValues = dataArray.slice(1).filter(filterCallback).map(row => row[col].value);
 
@@ -163,6 +164,6 @@ async function addReports(dataArray, reportOptions, recordItems, scope) {
             newDataArray.push(newRow);
         }
     };
-    
+
     return newDataArray;
 }
